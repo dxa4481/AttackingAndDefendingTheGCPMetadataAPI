@@ -106,8 +106,25 @@ Note none are enabled by defualt, and the only offering that blocks the VM's GCP
 
 ### GKE Example
 Here's a demo where we enabled both Concealment and Shielded Nodes, and where able to access the node's credentials: https://drive.google.com/file/d/1JLNzBjixe_iqPSmOZfR8oE9spdnOVCp8/view
- 
- 
 
+## Google Managed Service Accounts
+So far we talked about service accounts created on your behalf, that by default get attached to your resources, like Cloud Functions and VM's.
 
-In GKE, the GCP Kubernetes offering, the nodes that power your cluster are just standard GCP VM's you can view in your project. This means, again they are given the default service account with project editor.
+But what about Google Managed Service Accounts?
+
+For starters, it's not 100% clear how they're used, because they're mostly attached to infastructure you can't actually see, to power the cloud. The role bindings for these service accounts are visible, which is how we took the screenshot above, but the roles themselves are often not visible, so we can't always see the underlying permissions.
+
+Fortunately, a clever trick [@matter_of_cat](https://twitter.com/MatterOfCat) found allows us to see these permissions, via the iam roles copy API, copying the permissions from a role we can't intraspect, into a role we can instraspect.
+
+<img src="https://i.imgur.com/yJwou0o.png" width="400">
+
+Using this technique, let's look at a Google Managed Service account used for [Cloud Build](https://cloud.google.com/cloud-build)
+
+```
+<projectID>@cloudbuild.gserviceaccount.com	
+```
+
+<img src="https://i.imgur.com/LMTldtg.png" width="600">
+
+This role has read/write to all Storage, pubsub, Cloud Build, and a few other things in your project.
+
