@@ -161,3 +161,13 @@ Though the GCP metadata API at a high level seems similar to AWS, when we dig de
 Though we covered 3 API's in this readme, there are way more than 3 that expose the metadata API, some of which allow you to fetch Google Managed credentials, many of which allow you to fetch user managed credentials.
 
 The custom header Google has you set protects against a lot of SSRF attacks, however as shown in this writeup, there are still many attacks you can perform against the metadata API that don't require an SSRF vulnerability.
+
+
+## Recomendations
+Here's what we recommend:
+
++ Across the board descope your default user managed identities
++ Don't use default identities
++ Make use of project isolation (put cloudbuild in its own project)
++ In GKE enable workload identity
++ Write custom alerts in stackdriver to detect anomalous usage of Google Managed credentials
