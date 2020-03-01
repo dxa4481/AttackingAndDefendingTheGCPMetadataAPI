@@ -1,6 +1,8 @@
 # Attacking And Defending The GCPMetadata API
 This repo gives an overview of some GCP metadata API attack and defend patterns
 
+This is complementary to a presentation that I recently did with @matter_of_cat at bsidessf on this subject (will link to video when available)
+
 ## Overview
 A metadata API in a cloud platform is an internal API resources like VM's that run code can query to obtain information about themselves, and obtain credentails to access the instance identity attached to the resource.
 
