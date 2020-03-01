@@ -18,10 +18,10 @@ This is the vulnerability that lead to the [Capital One data breach](https://edi
 ### AWS Protection
 AWS roled out [IMDSv2](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html), which protects against most SSRF vulnerabilities, by requiring users have a header set on their request.
 
-## GCP Metadata API
+# GCP Metadata API
 Similair to AWS, there are two versions of the metadata API, v0.1 and v1. v1 requires a header be set, which protects against many SSRF vulnerabilities.
 
-### Bypassing the GCP Protections in Cloud Functions
+## Bypassing the GCP Protections in Cloud Functions
 Cloud functions are a serverless offering in GCP that has a metadata available to them. 
 
 Not too long ago, a blog post was released by Google, demonstrating how to run a headless browser in these cloud functions
@@ -51,7 +51,14 @@ Using this technique I was able to identify vulnerable customers.
 
 _Because in GCP instances have default identities with default permissions, this leads to a compromise of a signifigent portion of the customer's GCP project. More on this later..._
 
-### Fixing DNS Rebind attacks
+### Fixing DNS Rebind Attacks
 Google paid 1337 for the report, and added Host header validation to protect against future DNS rebind attacks. 
 <img src="https://i.imgur.com/EcwsR0y.png" width="400">
 
+## Google Created Identities (Service Accounts) In GCP
+In GCP, Service Accounts are used to provide instances identity and give them privlige. When you enable all the API's in GCP, identities with default permissions bound to your project are created on your behalf. Some of them are attached to instances you control, some of them are attached to instances you do not control. Here's a list of them:
+
+<img src="https://i.imgur.com/OrEPx7W.png" width="800">
+
+
+## Attacking The Metadata API in 
