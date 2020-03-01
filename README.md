@@ -128,3 +128,36 @@ Using this technique, let's look at a Google Managed Service account used for [C
 
 This role has read/write to all Storage, pubsub, Cloud Build, and a few other things in your project.
 
+### Cloud Build overview
+Cloud Build is an API that monitors a Git Repository, and builds artifacts from the repository, and typically publishes them to GCR for you.
+
+It's pretty handy to just attach to a repo and have it magically build your container images for you.
+
+### Cloud Build Example
+Though we can't actually know exactly what's going on here, it is likely when you push to your repo, behind the scenes there's some kind of VM or Cloud Function that isn't visibile in your project doing your build. This VM as it so happens, exposes a metadata API. This means if in the build steps we reach out to the metadata API, we can steal a credential for the Google Managed service account
+
+Here's a demo of us doing that:
+https://drive.google.com/file/d/1bISilsz1XhsNSzvvrt_WX4iLqbSe_o3y/view?usp=sharing
+
+And here's the repository we used:
+https://github.com/allisonis/fun-cloudbuild
+
+## Detection
+Fortunately, though some aspects of Google Managed service accounts are not visible in your project, logs from the usage of its credentials are.
+
+This means we can do things like alert on anomalous behavior such as these credentials being used outside of Google IP ranges:
+
+<img src="https://i.imgur.com/tJw6TNp.png" width="600">
+
+Note this method is imperfect, because the attacker can likely spin up a VM in GCP and come from an IP similair to the one legitamately used.
+
+Other anomalous behavior is API specific. For example, we can be pretty sure this cloudbuild service account shouldn't be accessing certain buckets (such as the passwords bucket used in the demo) so we can write custom alerts per API to look for anomalous behavior.
+
+[Event Threat Detection](https://cloud.google.com/event-threat-detection/docs/concepts-overview) is an API built into Google that is meant to do this for you. It monitors stackdriver and alerts you if it sees anomalous or bad behavior. Unfortunately today it has no detection for these types of attacks, however we can expect they will continue to build this service out and hopefully pick up support for these types of attacks.
+
+# Conclusion
+Though the GCP metadata API at a high level seems similar to AWS, when we dig deeper into it we see it's the default identities GCP gives all of its offerings that really sets its risk profile apart from AWS.
+
+Though we covered 3 API's in this readme, there are way more than 3 that expose the metadata API, some of which allow you to fetch Google Managed credentials, many of which allow you to fetch user managed credentials.
+
+The custom header Google has you set protects against a lot of SSRF attacks, however as shown in this writeup, there are still many attacks you can perform against the metadata API that don't require an SSRF vulnerability.
