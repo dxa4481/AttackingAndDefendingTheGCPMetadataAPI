@@ -99,9 +99,10 @@ GCP offeres a wide range of offerings to protect against both the K8's and the G
 <img src="https://i.imgur.com/yX3ZXOt.png" width="400">
 
 You can read about them here:
-https://cloud.google.com/kubernetes-engine/docs/how-to/protecting-cluster-metadata#concealment
-https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity
-https://cloud.google.com/kubernetes-engine/docs/how-to/shielded-gke-nodes
+
++ https://cloud.google.com/kubernetes-engine/docs/how-to/protecting-cluster-metadata#concealment
++ https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity
++ https://cloud.google.com/kubernetes-engine/docs/how-to/shielded-gke-nodes
 
 
 Note none are enabled by defualt, and the only offering that blocks the VM's GCP credentials from being fetched is Workload Identity, and it's incompatible with Metadata Concealment.
