@@ -141,6 +141,9 @@ It's pretty handy to just attach to a repo and have it magically build your cont
 ### Cloud Build Example
 Though we can't actually know exactly what's going on here, it is likely when you push to your repo, behind the scenes there's some kind of VM or Cloud Function that isn't visibile in your project doing your build. This VM as it so happens, exposes a metadata API. This means if in the build steps we reach out to the metadata API, we can steal a credential for the Google Managed service account
 
+
+Note, in this demo, I've been granted 0 access to GCP, I was simply added as a colaborator on a repo, that had cloudbuild enabled. By defualt this is enabled on all branches, so in this demo I'll be stealing this GCP credential from a random branch on a repo I've been added as a contributor to.
+
 Here's a demo of us doing that:
 https://drive.google.com/file/d/1bISilsz1XhsNSzvvrt_WX4iLqbSe_o3y/view?usp=sharing
 
