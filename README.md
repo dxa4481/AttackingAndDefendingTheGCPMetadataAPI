@@ -133,7 +133,7 @@ Using this technique, let's look at a Google Managed Service account used for [C
 
 This role has read/write to all Storage, pubsub, Cloud Build, and a few other things in your project.
 
-### Cloud Build overview
+### Attacking The Metadata API in Cloud Build
 Cloud Build is an API that monitors a Git Repository, and builds artifacts from the repository, and typically publishes them to GCR for you.
 
 It's pretty handy to just attach to a repo and have it magically build your container images for you.
