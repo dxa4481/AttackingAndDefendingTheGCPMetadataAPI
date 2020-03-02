@@ -57,6 +57,8 @@ _Because in GCP instances have default identities with default permissions, this
 Google paid 1337 for the report, and added Host header validation to protect against future DNS rebind attacks. 
 <img src="https://i.imgur.com/EcwsR0y.png" width="400">
 
+All that said, SSRF is not the only way to attack the Metadata API, and the rest of this post will serve to show other methods of attack that are specific to the GCP platform.
+
 ## Google Created Identities (Service Accounts) In GCP
 In GCP, Service Accounts are used to provide instances identity and give them privlige. When you enable all the API's in GCP, identities with default permissions bound to your project are created on your behalf. Some of them are attached to instances you control, some of them are attached to instances you do not control. Here's a list of them:
 
