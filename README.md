@@ -4,7 +4,7 @@ This repo gives an overview of some GCP metadata API attack and defend patterns
 This is complementary to a presentation that I recently did with @matter_of_cat at bsidessf on this subject (will link to video when available)
 
 ## Overview
-A metadata API in a cloud platform is an internal API resources like VM's that run code can query to obtain information about themselves, and obtain credentails to access the instance identity attached to the resource.
+A metadata API in a cloud platform is an internal API resources like VM's that run code can query to obtain information about themselves, and obtain credentials to access the instance identity attached to the resource.
 
 <img src="https://i.imgur.com/vW1iiFh.png" width="600">
 
@@ -18,10 +18,10 @@ In AWS for a long time simple get requests could be use to fetch instance identi
 This is the vulnerability that lead to the [Capital One data breach](https://edition.cnn.com/2019/07/29/business/capital-one-data-breach/index.html)
 
 ### AWS Protection
-AWS roled out [IMDSv2](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html), which protects against most SSRF vulnerabilities, by requiring users have a header set on their request.
+AWS rolled out [IMDSv2](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html), which protects against most SSRF vulnerabilities, by requiring users have a header set on their request.
 
 # GCP Metadata API
-Similair to AWS, there are two versions of the metadata API, v0.1 and v1. v1 requires a header be set, which protects against many SSRF vulnerabilities.
+Similar to AWS, there are two versions of the metadata API, v0.1 and v1. v1 requires a header be set, which protects against many SSRF vulnerabilities.
 
 ## Bypassing the GCP Protections in Cloud Functions
 Cloud functions are a serverless offering in GCP that has a metadata available to them. 
@@ -30,7 +30,7 @@ Not too long ago, a blog post was released by Google, demonstrating how to run a
 
 <img src="https://i.imgur.com/Vux88f7.png" width="400">
 
-Because browsers can set headers, untrusted HTML can potentially access the metadata API. They are beholdent to the Same Origin Policy, but [DNS rebinding](https://github.com/nccgroup/singularity) tricks [allow](https://www.youtube.com/watch?v=Q0JG_eKLcws) us to [bypass](https://www.youtube.com/watch?v=HfpnloZM61I) this restriction.
+Because browsers can set headers, untrusted HTML can potentially access the metadata API. They are beholden to the Same Origin Policy, but [DNS rebinding](https://github.com/nccgroup/singularity) tricks [allow](https://www.youtube.com/watch?v=Q0JG_eKLcws) us to [bypass](https://www.youtube.com/watch?v=HfpnloZM61I) this restriction.
 
 This means customers of Google that stood up headless browsers in the cloud function and allowed untrusted HTML to be rendered exposed the instance credentials to the untrusted HTML.
 
@@ -47,11 +47,11 @@ Using this information and a passiveDNS vendor, we can enumerate cloud functions
 
 <img src="https://i.imgur.com/CI4Pwt2.png" width="400">
 
-At this point to get the last peice, we can guess the path via either trying `/function-X` or `/screenshot` and see if we're presented with a page that matches the one from the blog post.
+At this point to get the last piece, we can guess the path via either trying `/function-X` or `/screenshot` and see if we're presented with a page that matches the one from the blog post.
 
 Using this technique I was able to identify vulnerable customers.
 
-_Because in GCP instances have default identities with default permissions, this leads to a compromise of a signifigent portion of the customer's GCP project. More on this later..._
+_Because in GCP instances have default identities with default permissions, this leads to a compromise of a significant portion of the customer's GCP project. More on this later..._
 
 ### Fixing DNS Rebind Attacks
 Google paid 1337 for the report, and added Host header validation to protect against future DNS rebind attacks. 
@@ -60,7 +60,7 @@ Google paid 1337 for the report, and added Host header validation to protect aga
 All that said, SSRF is not the only way to attack the Metadata API, and the rest of this post will serve to show other methods of attack that are specific to the GCP platform.
 
 ## Google Created Identities (Service Accounts) In GCP
-In GCP, Service Accounts are used to provide instances identity and give them privlige. When you enable all the API's in GCP, identities with default permissions bound to your project are created on your behalf. Some of them are attached to instances you control, some of them are attached to instances you do not control. Here's a list of them:
+In GCP, Service Accounts are used to provide instances identity and give them privilege. When you enable all the API's in GCP, identities with default permissions bound to your project are created on your behalf. Some of them are attached to instances you control, some of them are attached to instances you do not control. Here's a list of them:
 
 <img src="https://i.imgur.com/OrEPx7W.png" width="800">
 
@@ -86,7 +86,7 @@ These two service accounts are attached to just about all of your resources by d
 In GKE, the GCP Kubernetes offering, the nodes that power your cluster are just standard GCP VM's you can view in your project. This means, again they are given the default service account with project editor.
 
 Unlike Cloud Functions, VM's have something called _scopes_ that limit which API's the service account can access, regardless
-of the service account's permissons. By default this is the scope applied to VM's:
+of the service account's permissions. By default this is the scope applied to VM's:
 
 <img src="https://i.imgur.com/g3moLzt.png" width="400">
 
@@ -94,7 +94,7 @@ Note: this leaves read access to storage open, meaning VM's by default can read 
 
 Because workloads in GKE all run on underlying VM's that have storage open, all workloads in GKE by default can hit the metadata API, and fetch these credentials.
 
-Note, nodes likely need storage enabled, so they can fetch from the GCR (Google Container Regeistry) which is powered by storage.
+Note, nodes likely need storage enabled, so they can fetch from the GCR (Google Container Registry) which is powered by storage.
 
 #### GKE Metadata Protections
 GCP offeres a wide range of offerings to protect against both the K8's and the GCP metadata API:
@@ -107,7 +107,7 @@ You can read about them here:
 + https://cloud.google.com/kubernetes-engine/docs/how-to/shielded-gke-nodes
 
 
-Note none are enabled by defualt, and the only offering that blocks the VM's GCP credentials from being fetched is Workload Identity, and it's incompatible with Metadata Concealment.
+Note none are enabled by default, and the only offering that blocks the VM's GCP credentials from being fetched is Workload Identity, and it's incompatible with Metadata Concealment.
 
 ### GKE Example
 Here's a demo where we enabled both Concealment and Shielded Nodes, and where able to access the node's credentials: https://drive.google.com/file/d/1JLNzBjixe_iqPSmOZfR8oE9spdnOVCp8/view
@@ -117,9 +117,9 @@ So far we talked about service accounts created on your behalf, that by default 
 
 But what about Google Managed Service Accounts?
 
-For starters, it's not 100% clear how they're used, because they're mostly attached to infastructure you can't actually see, to power the cloud. The role bindings for these service accounts are visible, which is how we took the screenshot above, but the roles themselves are often not visible, so we can't always see the underlying permissions.
+For starters, it's not 100% clear how they're used, because they're mostly attached to infrastructure you can't actually see, to power the cloud. The role bindings for these service accounts are visible, which is how we took the screenshot above, but the roles themselves are often not visible, so we can't always see the underlying permissions.
 
-Fortunately, a clever trick [@matter_of_cat](https://twitter.com/MatterOfCat) found allows us to see these permissions, via the iam roles copy API, copying the permissions from a role we can't intraspect, into a role we can instraspect.
+Fortunately, a clever trick [@matter_of_cat](https://twitter.com/MatterOfCat) found allows us to see these permissions, via the iam roles copy API, copying the permissions from a role we can't introspect, into a role we can introspect.
 
 <img src="https://i.imgur.com/yJwou0o.png" width="400">
 
@@ -142,7 +142,7 @@ It's pretty handy to just attach to a repo and have it magically build your cont
 Though we can't actually know exactly what's going on here, it is likely when you push to your repo, behind the scenes there's some kind of VM or Cloud Function that isn't visibile in your project doing your build. This VM as it so happens, exposes a metadata API. This means if in the build steps we reach out to the metadata API, we can steal a credential for the Google Managed service account
 
 
-Note, in this demo, I've been granted 0 access to GCP, I was simply added as a colaborator on a repo, that had cloudbuild enabled. By defualt this is enabled on all branches, so in this demo I'll be stealing this GCP credential from a random branch on a repo I've been added as a contributor to.
+Note, in this demo, I've been granted 0 access to GCP, I was simply added as a collaborator on a repo, that had cloudbuild enabled. By default this is enabled on all branches, so in this demo I'll be stealing this GCP credential from a random branch on a repo I've been added as a contributor to.
 
 Here's a demo of us doing that:
 https://drive.google.com/file/d/1bISilsz1XhsNSzvvrt_WX4iLqbSe_o3y/view?usp=sharing
@@ -157,7 +157,7 @@ This means we can do things like alert on anomalous behavior such as these crede
 
 <img src="https://i.imgur.com/tJw6TNp.png" width="600">
 
-Note this method is imperfect, because the attacker can likely spin up a VM in GCP and come from an IP similair to the one legitamately used.
+Note this method is imperfect, because the attacker can likely spin up a VM in GCP and come from an IP similar to the one legitimately used.
 
 Other anomalous behavior is API specific. For example, we can be pretty sure this cloudbuild service account shouldn't be accessing certain buckets (such as the passwords bucket used in the demo) so we can write custom alerts per API to look for anomalous behavior.
 
@@ -171,7 +171,7 @@ Though we covered 3 API's in this readme, there are way more than 3 that expose 
 The custom header Google has you set protects against a lot of SSRF attacks, however as shown in this writeup, there are still many attacks you can perform against the metadata API that don't require an SSRF vulnerability.
 
 
-## Recomendations
+## Recommendations
 Here's what we recommend:
 
 + Across the board descope your default user managed identities
